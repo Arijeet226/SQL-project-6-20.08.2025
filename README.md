@@ -24,156 +24,158 @@ DAY-13-14- Focuses on creating the visualization of each queries result and a fi
 
 ## Q1-Reward tier on customer based on number of order placed
 ```sql
-SELECT r.city,COUNT(o.order_id)AS total_order
-FROM orders o
-JOIN resturant r
-ON o.resturant_id=r.resturant_id
-GROUP BY city
-ORDER BY total_order DESC;
-/*JAIPUR,HYDRABAD,DELHI have the highest number of food orders compared to other city
---active markets
---focus-marketing strategies
---expansion strategies
---improve operations in other cities*/
+SELECT c.customer_id,c.customer_name,COUNT(o.order_id) AS total_orders,
+CASE 
+WHEN COUNT(o.order_id) >= 10 THEN 'GOLD'
+WHEN COUNT(o.order_id) BETWEEN 5 AND 9 THEN 'SILVER'
+ELSE 'BRONZE'
+END AS customer_tier
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.customer_name;
 ```
 ![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/_COUNT%20OF%20CUSTOMER_TIER.png)
 
 
 ## Q2-Restaurant size category
 ```sql
-SELECT m.item_name,SUM(m.price*od.quantity) AS total_revenue
-FROM menu_item m
-JOIN order_details od
-ON m.item_id=od.item_id
-GROUP BY m.item_name
-ORDER BY total_revenue DESC; 
-/*insights-best performaing food items
-ALOO PARATHA,FISH CURRY,HAKKA NOODLES the top 3 food item generating revenue
-promote it more prominently on app
-ensure consistent avalaibility and faster delivery*/
+SELECT resturant_id,COUNT(item_id) AS total_menu_items,
+CASE 
+WHEN COUNT(item_id) < 5 THEN 'Small'
+WHEN COUNT(item_id) BETWEEN 5 AND 10 THEN 'Medium'
+ELSE 'Large'
+END AS resturant_size_type
+FROM menu_item
+GROUP BY resturant_id;
 ```
 ![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/Count%20of%20Resturant_size_type.png)
 
 
 ## Q3-How many high value orders
 ```sql
-SELECT c.customer_name,SUM(m.price*od.quantity) AS total_revenue
-FROM menu_item m
-JOIN order_details od
-ON m.item_id=od.item_id
-JOIN orders o
-ON od.order_id=o.order_id
-JOIN customers c
-ON o.customer_id=c.customer_id
-GROUP BY c.customer_name
-ORDER BY total_revenue DESC; 
-/*MUHAMMAD PATEL, VIHAAN NAIR,VIHAAN PATEl are the customers who spends more than the rest
-Get a feedback from them and get to know the reason behind their trust in this platform
-list and track their favourite resturant and the food ordered by them and find the pattern and crack it's popularity
-Try to implement those readings in the loss making businesses to attract customers.*/
+SELECT order_category,COUNT(*) AS total_order_count
+FROM (SELECT o.order_id,
+SUM(m.price * od.quantity) AS order_total,
+CASE
+WHEN SUM(m.price * od.quantity) > 500 THEN 'High Value'
+ELSE 'Low Value'END AS order_category
+FROM orders o
+JOIN order_details od ON o.order_id = od.order_id
+JOIN menu_item m ON od.item_id = m.item_id
+GROUP BY o.order_id) AS order_totals
+GROUP BY order_category;
 ```
 ![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/Total_Order_Count.png)
 
 
 ## Q4-For each city, list the restaurant with highest total revenue
 ```sql
-SELECT r.rest_name,COUNT(o.order_id)AS order_count
-FROM orders o
-JOIN resturant r
-ON o.resturant_id=r.resturant_id
-GROUP BY rest_name
-ORDER BY order_count DESC;
-/*GOLDEN GARDEN, SPICE PALACE, TASTY BISTRO are the top restrurant where number of orders are more 
-to the underperformers in this list it is suggested to give discount and combo offers to get more order
-and study the business approach of the top runner in this list and apply those to improve the order count
-To ensure the top runner to remain in this game as toppers try to follow trendy ideas to increase the frequency of order*/
+SELECT r.rest_name,r.city
+FROM resturant r
+WHERE (r.resturant_id,r.city)IN(SELECT r.resturant_id,r2.city
+FROM resturant r2
+JOIN orders o ON r2.resturant_id=o.resturant_id
+JOIN order_details od ON o.order_id=od.order_id
+JOIN menu_item m ON od.item_id=m.item_id
+GROUP BY r2.city,r2.resturant_id
+HAVING SUM(m.price*od.quantity)=(SELECT MAX(total_revenue)
+FROM (SELECT r3.city AS city_name,r3.resturant_id,SUM(m.price*od.quantity) AS total_revenue
+FROM resturant r3
+JOIN orders o ON r3.resturant_id=o.resturant_id
+JOIN order_details od ON o.order_id=od.order_id
+JOIN menu_item m ON od.item_id=m.item_id
+GROUP BY r3.city,r3.resturant_id) AS city_revenue
+WHERE city_revenue.city_name=r2.city));
 ```
 ![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/image.png)
 
 
 ## Q5-Rank restaurant by total revenue without gap
 ```sql
-SELECT r.city,AVG(m.price*od.quantity) AS total_revenue
-FROM order_details od
-JOIN menu_item m
-ON od.item_id=m.item_id
-JOIN resturant r
-ON m.resturant_id=r.resturant_id
-GROUP BY r.city
-ORDER BY total_revenue DESC; 
-/*MUMBAI,HYDRABAD,PUNE have the highest average order value by city compared to SURAT AHMEDABAD
- AS top runner have active markets ,focus-marketing strategies ,
- expansion strategies , need to improve operations in other cities*/
+SELECT  resturant_id,rest_name,total_revenue,
+DENSE_RANK() OVER (ORDER BY total_revenue DESC) AS revenue_rank
+FROM (SELECT r.resturant_id,r.rest_name,SUM(m.price * od.quantity) AS total_revenue
+FROM resturant r
+JOIN menu_item m ON r.resturant_id = m.resturant_id
+JOIN order_details od ON m.item_id = od.item_id
+GROUP BY r.resturant_id, r.rest_name) AS revenue_per_restaurant
+ORDER BY revenue_rank, resturant_id;
 ```
 ![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/Total%20Revenue%20by%20Restaurant.png)
 
 
 ## Q6-Monthly order summary
 ```sql
-SELECT MONTH(order_date)AS month_number,MONTHNAME(order_date)AS order_month,COUNT(order_id)AS total_orders
-FROM orders
-GROUP BY MONTH(order_date),MONTHNAME(order_date)
-ORDER BY month_number;
-/*insights tracking the monthly growth in orders
-peak ordering months
-impacts of festivals,holidays ,weather
-plan time sensitive discount or campaigns*/
+WITH monthly_orders AS 
+(SELECT MONTH(order_date) AS order_month,COUNT(order_id) AS total_orders
+FROM orders GROUP BY MONTH(order_date))
+
+SELECT order_month,total_orders
+FROM monthly_orders
+WHERE total_orders > 50
+ORDER BY order_month;
 ```
 ![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/Total%20Order%20Month%20wise.png)
 
 
 ## Q7-Popular items
 ```sql
-SELECT c.city,SUM(m.price*od.quantity) AS total_revenue
-FROM customers c
-JOIN orders o
-ON c.customer_id=o.customer_id
-JOIN order_details od
-ON o.order_id=od.order_id
-JOIN menu_item m
-ON od.item_id=m.item_id
-GROUP BY c.city
-ORDER BY total_revenue DESC
-LIMIT 3;
-/*CHENNAI,PUNE,BANGALORE are the top 3*/
+CREATE TEMPORARY TABLE temp_popular_item AS 
+SELECT m.item_id,m.item_name,COUNT(od.quantity) AS quantity_sold
+FROM menu_item m
+JOIN order_details od ON m.item_id=od.item_id
+GROUP BY m.item_id,m.item_name;
+
+-- show the top 5 items by quantity
+SELECT * FROM temp_popular_item
+ORDER BY quantity_sold DESC
+LIMIT 5;
 ```
 ![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/TOP%205%20item%20sold%20%20by%20Quantity%20.png)
 
 
 ## Q8-Top N customer by orders
 ```sql
-SELECT city, COUNT(DISTINCT customer_id) AS number_of_customer
-FROM customers
-GROUP BY city
-ORDER BY number_of_customer DESC;
-/*AHMEDBAD, CHENNAI,KOLKATA are the top 3 with most number of customer
-try to focus on the least in terms of customers like JAIPUR*/
+DELIMITER //
+CREATE PROCEDURE topcustomer (IN limit_num INT)
+BEGIN 
+SELECT c.customer_name,COUNT(o.order_id) AS total_order
+FROM customers c
+JOIN orders o ON c.customer_id=o.customer_id
+GROUP BY c.customer_name
+ORDER BY total_order DESC
+LIMIT limit_num;
+END //
+DELIMITER ;
+CALL topcustomer (5);
 ```
 ![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/TOP%205%20Customers%20by%20Orders.png)
 
 
 ## Q9-Customer who never ordered
 ```sql
-SELECT m.item_name,SUM(od.order_id)AS total_orders
-FROM menu_item m
-JOIN order_details od
-ON m.item_id=od.item_id
-GROUP BY m.item_name
-ORDER BY total_orders DESC;
+WITH active_customers AS 
+(SELECT DISTINCT o.customer_id
+FROM orders o)
+
+SELECT c.customer_id,c.customer_name
+FROM customers c
+LEFT JOIN active_customers ac ON c.customer_id = ac.customer_id
+WHERE ac.customer_id IS NULL;
 ```
 ![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/customer_id.png)
 
 
 ## Q10-Number of item count per restaurant
 ```sql
-SELECT r.rest_name,COUNT(o.order_id) AS orders_count
-FROM resturant r
-JOIN orders o
-ON r.resturant_id=o.resturant_id
-GROUP BY rest_name
-HAVING orders_count < 30
-ORDER BY  orders_count ASC;
-/* GOLDEN DINER is the lowest among less than 30 order count criteria it has 14 order count
-TOTAL 11 resturant are there in this list*/
+WITH item_per_rest AS 
+(SELECT m.resturant_id,COUNT(*) AS item_count
+FROM menu_item m
+GROUP BY m.resturant_id)
+
+SELECT r.rest_name,i.item_count
+FROM item_per_rest i
+JOIN resturant r ON r.resturant_id=i.resturant_id
+ORDER BY i.item_count DESC;
 ```
 ![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/Item%20Count%20by%20Restaurant.png)
