@@ -36,7 +36,7 @@ ORDER BY total_order DESC;
 --expansion strategies
 --improve operations in other cities*/
 ```
-![](https://github.com/Arijeet226/SQL-project-3-20.7.2025/blob/dac1a6d26a9fac994219594a1f0be3a5bd6c5c25/visualizations/Total_order%20vs.%20city.png)
+![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/_COUNT%20OF%20CUSTOMER_TIER.png)
 
 
 ## Q2-Restaurant size category
@@ -52,7 +52,7 @@ ALOO PARATHA,FISH CURRY,HAKKA NOODLES the top 3 food item generating revenue
 promote it more prominently on app
 ensure consistent avalaibility and faster delivery*/
 ```
-![](https://github.com/Arijeet226/SQL-project-3-20.7.2025/blob/dac1a6d26a9fac994219594a1f0be3a5bd6c5c25/visualizations/Total%20revenue%20VS%20Item.png)
+![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/Count%20of%20Resturant_size_type.png)
 
 
 ## Q3-How many high value orders
@@ -72,7 +72,7 @@ Get a feedback from them and get to know the reason behind their trust in this p
 list and track their favourite resturant and the food ordered by them and find the pattern and crack it's popularity
 Try to implement those readings in the loss making businesses to attract customers.*/
 ```
-![](https://github.com/Arijeet226/SQL-project-3-20.7.2025/blob/dac1a6d26a9fac994219594a1f0be3a5bd6c5c25/visualizations/Total%20revenue%20VS%20customers.png)
+![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/Total_Order_Count.png)
 
 
 ## Q4-For each city, list the restaurant with highest total revenue
@@ -88,7 +88,7 @@ to the underperformers in this list it is suggested to give discount and combo o
 and study the business approach of the top runner in this list and apply those to improve the order count
 To ensure the top runner to remain in this game as toppers try to follow trendy ideas to increase the frequency of order*/
 ```
-![](https://github.com/Arijeet226/SQL-project-3-20.7.2025/blob/dac1a6d26a9fac994219594a1f0be3a5bd6c5c25/visualizations/ORDER_COUNT%20%20vs%20RESTURANT.png)
+![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/image.png)
 
 
 ## Q5-Rank restaurant by total revenue without gap
@@ -105,7 +105,7 @@ ORDER BY total_revenue DESC;
  AS top runner have active markets ,focus-marketing strategies ,
  expansion strategies , need to improve operations in other cities*/
 ```
-![](https://github.com/Arijeet226/SQL-project-3-20.7.2025/blob/dac1a6d26a9fac994219594a1f0be3a5bd6c5c25/visualizations/Average%20revenue%20vs.%20city.png)
+![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/Total%20Revenue%20by%20Restaurant.png)
 
 
 ## Q6-Monthly order summary
@@ -119,7 +119,7 @@ peak ordering months
 impacts of festivals,holidays ,weather
 plan time sensitive discount or campaigns*/
 ```
-![](https://github.com/Arijeet226/SQL-project-3-20.7.2025/blob/dac1a6d26a9fac994219594a1f0be3a5bd6c5c25/visualizations/Total_orders%20vs.%20Order_month.png)
+![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/Total%20Order%20Month%20wise.png)
 
 
 ## Q7-Popular items
@@ -137,7 +137,7 @@ ORDER BY total_revenue DESC
 LIMIT 3;
 /*CHENNAI,PUNE,BANGALORE are the top 3*/
 ```
-![](https://github.com/Arijeet226/SQL-project-3-20.7.2025/blob/dac1a6d26a9fac994219594a1f0be3a5bd6c5c25/visualizations/TOTAL%20REVENUE%20TOP%203%20CITY.png)
+![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/TOP%205%20item%20sold%20%20by%20Quantity%20.png)
 
 
 ## Q8-Top N customer by orders
@@ -149,7 +149,7 @@ ORDER BY number_of_customer DESC;
 /*AHMEDBAD, CHENNAI,KOLKATA are the top 3 with most number of customer
 try to focus on the least in terms of customers like JAIPUR*/
 ```
-![](https://github.com/Arijeet226/SQL-project-3-20.7.2025/blob/dac1a6d26a9fac994219594a1f0be3a5bd6c5c25/visualizations/Number_of_customer%20vs.%20city.png)
+![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/TOP%205%20Customers%20by%20Orders.png)
 
 
 ## Q9-Customer who never ordered
@@ -161,7 +161,7 @@ ON m.item_id=od.item_id
 GROUP BY m.item_name
 ORDER BY total_orders DESC;
 ```
-![](https://github.com/Arijeet226/SQL-project-3-20.7.2025/blob/dac1a6d26a9fac994219594a1f0be3a5bd6c5c25/visualizations/Total%20orders%20VS%20Items.png)
+![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/customer_id.png)
 
 
 ## Q10-Number of item count per restaurant
@@ -176,4 +176,4 @@ ORDER BY  orders_count ASC;
 /* GOLDEN DINER is the lowest among less than 30 order count criteria it has 14 order count
 TOTAL 11 resturant are there in this list*/
 ```
-![](https://github.com/Arijeet226/SQL-project-3-20.7.2025/blob/dac1a6d26a9fac9942195)
+![](https://github.com/Arijeet226/SQL-project-6-20.08.2025/blob/15e2cc044b2f4c37d4ca62cd3f1d85d6f849d500/visualization/Item%20Count%20by%20Restaurant.png)
